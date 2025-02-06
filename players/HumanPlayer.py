@@ -1,13 +1,15 @@
+from Utils import*
+
 class HumanPlayer:
     def __init__(self, player, graphics):
         self.player = player  # Player value (e.g., 1 for white, -1 for black)
         self.graphics = graphics
 
     def move(self, env):
-        validMoves = env.get_valid_moves(self.player)
+        validMoves = get_valid_moves(env.board, self.player) # move this to a func in player and call it from all players
         if validMoves == []: 
-            env.passed()
             return
+        
         noMoveMade = True
         move = None
         while noMoveMade:

@@ -1,12 +1,12 @@
 import time
 import tkinter as tk
-from sys import argv
-
 import numpy as np
+from sys import argv
 
 from Graphics import Graphics
 from Othello import Othello
 from players import *
+from Utils import *
 
 # not global?
 n = 8
@@ -31,44 +31,41 @@ def main():
         black_value: 0
     }
 
-    count_draws = True
-
     #black_player = HumanPlayer(black_value, graphics)  # type: ignore # Human plays as Black
-    #black_player = RandomPlayer(black_value)
+    black_player = RandomPlayer(black_value)
     # black_player = ComputerPlayer(black_value)  # Computer plays as Black
-    black_player = EvalMiniMax(black_value, 4)
+    #black_player = EvalMiniMax(black_value, 3)
 
 
     #white_player = ComputerPlayer(white_value)  # Computer plays as White
     #white_player = HumanPlayer(white_value, graphics)  # type: ignore # Human plays as White
-    white_player = EvalMiniMax(white_value, 5)
+    white_player = EvalMiniMax(white_value, 3)
 
     n_played = 0
+    
+    start_time = time.time()
     while n_played < n_games:
         env.reset()
         graphics.draw(env.board)
         while True:
             black_player.move(env)
             graphics.draw(env.board)
-            if env.is_game_over(): break
+            if is_game_over(env.board): break
 
             white_player.move(env)
             graphics.draw(env.board)
-            if env.is_game_over(): break
-
-            if env.is_stalemate(): break
+            if is_game_over(env.board): break
 
             # this doesnt work think its because humanplayer isnt seen
 #        if isinstance(black_player, HumanPlayer) or isinstance(white_player, HumanPlayer):
 #            time.sleep(1)
         
-        winner = env.who_Won()
+        winner = who_won(env.board)
+        print(np.sum(env.board))
         n_wins[winner] += 1
-        if count_draws:
-            n_played += 1
-        elif winner != 0:
-            n_played += 1
-            
+        n_played += 1
+    
+    elapsed_time = time.time() - start_time
     graphics.root.quit()
 
         # stop graphics 
@@ -77,6 +74,9 @@ def main():
     print(f'black_player won {100.0 * n_wins[black_value] / n_played}%')
     print(f'white_player won {100.0 * n_wins[white_value] / n_played}%')
     print(f'draw             {100.0 * n_wins[0] / n_played}%')
+    print()
+    print(f"Total elapsed time: {elapsed_time:.6f} seconds")
+    print(f"Average elapsed time: {elapsed_time/n_played:.6f} seconds")
 
 
 if __name__ == "__main__": main()
