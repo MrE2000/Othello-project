@@ -2,6 +2,8 @@ import time
 import tkinter as tk
 from sys import argv
 
+import numpy as np
+
 from Graphics import Graphics
 from Othello import Othello
 from players import *
@@ -24,20 +26,22 @@ def main():
     env = Othello()
 
     n_wins = {
-        1: 0,
+        white_value: 0,
         0: 0,
-        -1: 0
+        black_value: 0
     }
 
     count_draws = True
 
     #black_player = HumanPlayer(black_value, graphics)  # type: ignore # Human plays as Black
-    black_player = RandomPlayer(black_value)
+    #black_player = RandomPlayer(black_value)
     # black_player = ComputerPlayer(black_value)  # Computer plays as Black
+    black_player = EvalMiniMax(black_value, 4)
+
 
     #white_player = ComputerPlayer(white_value)  # Computer plays as White
     #white_player = HumanPlayer(white_value, graphics)  # type: ignore # Human plays as White
-    white_player = RandomPlayer(white_value)
+    white_player = EvalMiniMax(white_value, 5)
 
     n_played = 0
     while n_played < n_games:
@@ -65,12 +69,13 @@ def main():
         elif winner != 0:
             n_played += 1
             
-        
-        # stop graphics
+    graphics.root.quit()
+
+        # stop graphics 
     
     print('Results:')
-    print(f'black_player won {100.0 * n_wins[1] / n_played}%')
-    print(f'white_player won {100.0 * n_wins[-1] / n_played}%')
+    print(f'black_player won {100.0 * n_wins[black_value] / n_played}%')
+    print(f'white_player won {100.0 * n_wins[white_value] / n_played}%')
     print(f'draw             {100.0 * n_wins[0] / n_played}%')
 
 

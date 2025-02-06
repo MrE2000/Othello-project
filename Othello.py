@@ -12,8 +12,33 @@ class Othello:
                            (1,-1),  (1,0) , (1,1)]
         self.n_passed = 0
 
-    def get_board(self): # should be used by algorithms
+
+    def get_board(self):
         return self.board.copy()
+
+    def update_board(self, board, move, player): # should be used by algorithms
+        board = board.copy()
+
+        x = move[0]        
+        y = move[1]    
+
+        board[x][y] = player
+        opponent = -player
+        
+        for dx, dy in self.directions:
+            nx, ny = x + dx, y + dy
+            to_flip = []
+            while self.is_valid_position(nx, ny) and board[nx][ny] == opponent:
+                to_flip.append((nx, ny))
+                nx += dx
+                ny += dy
+                
+            if self.is_valid_position(nx, ny) and board[nx][ny] == player:
+                for (fx, fy) in to_flip:
+                    board[fx][fy] = player
+
+
+        return board
 
     def reset(self):
         self.board[:,:] = 0
@@ -31,6 +56,34 @@ class Othello:
                 if self.is_valid_move(x, y, player):
                     moves.append((x, y))
         return moves
+    
+    def get_possible_moves(self, board, player):
+        moves = []
+        for x in range(n):
+            for y in range(n):
+                if self.is_possible_move(x, y, player, board):
+                    moves.append((x, y))
+        return moves
+    
+    def is_possible_move(self, x, y, player, board):
+        if board[x][y] != 0:
+            return False
+        
+        opponent = -player
+        valid = False
+        
+        for dx, dy in self.directions:
+            nx, ny = x + dx, y + dy
+            temp_flips = 0
+            while self.is_valid_position(nx, ny) and board[nx][ny] == opponent:
+                nx += dx
+                ny += dy
+                temp_flips += 1
+                
+            if temp_flips > 0 and self.is_valid_position(nx, ny) and board[nx][ny] == player:
+                valid = True
+                
+        return valid
 
     def is_valid_move(self, x, y, player):
         if self.board[x][y] != 0:
@@ -76,6 +129,7 @@ class Othello:
     
     def who_Won(self):
         sum = np.sum(self.board)
+        print(sum)
         if sum > 0:
             return 1
         elif sum < 0:
@@ -87,6 +141,7 @@ class Othello:
 
     def is_stalemate(self):
         if self.n_passed == 2:
+            self.n_passed = 0
             return True
         self.n_passed = 0
         return False
