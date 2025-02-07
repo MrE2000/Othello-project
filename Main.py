@@ -17,7 +17,8 @@ def main():
 
     n_games = 1
 
-    if len(argv) >= 1:
+    if len(argv) >= 1:  # TODO add arg for playing as white or black against the AI for the executable
+                        # TODO add arg for time limit selection for AI search
         try:
             n_games = int(argv[1])
         except: pass
@@ -31,6 +32,8 @@ def main():
         black_value: 0
     }
 
+
+    # TODO use time limit for figure out max depth of AI player
     #black_player = HumanPlayer(black_value, graphics)  # type: ignore # Human plays as Black
     black_player = RandomPlayer(black_value)
     # black_player = ComputerPlayer(black_value)  # Computer plays as Black
